@@ -18,7 +18,11 @@ from docutils.parsers.rst import roles
 from docutils.parsers.rst.languages import en as english
 from docutils.statemachine import StringList
 from docutils.utils import Reporter
-from jinja2 import Environment, environmentfilter
+from jinja2 import Environment
+try:
+    from jinja2 import environmentfilter  # Jinja2 < 3.0
+except ImportError:
+    from jinja2 import pass_environment as environmentfilter  # Jinja2 >= 3.0
 
 from sphinx.locale import __
 from sphinx.util import docutils, logging

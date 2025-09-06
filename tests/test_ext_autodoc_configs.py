@@ -852,6 +852,23 @@ def test_autodoc_default_options(app):
     assert '      Makes this snafucated.' in actual
 
 
+@pytest.mark.skipif(sys.version_info < (3, 7), reason='python 3.7+ is required.')
+@pytest.mark.sphinx('text', testroot='ext-autodoc',
+                    confoverrides={'autodoc_typehints': 'description',
+                                   'autodoc_type_aliases': {'JSONObject': 'test_type_aliases.JSONObject'}})
+def test_autodoc_type_aliases_with_description_typehints(app):
+    """Test that autodoc_type_aliases works when autodoc_typehints is set to 'description'."""
+    # Test the function with type aliases  
+    actual = do_autodoc(app, 'function', 'target.test_type_aliases.sphinx_doc')
+    content = '\n'.join(actual)
+    
+    # When autodoc_typehints='description', the function should have no type annotations in signature
+    # but type information should appear in the description with aliases applied
+    assert 'test_type_aliases.JSONObject' in content
+    assert 'Dict[str, Any]' not in content
+    assert 'typing.Dict[str, typing.Any]' not in content
+
+
 @pytest.mark.sphinx('html', testroot='ext-autodoc')
 def test_autodoc_default_options_with_values(app):
     # with :members:
